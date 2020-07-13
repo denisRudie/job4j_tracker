@@ -1,7 +1,7 @@
 package ru.job4j.tracker.lambda;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class SearchAtt {
@@ -14,9 +14,9 @@ public class SearchAtt {
                 return Integer.toString(100);
             }
         };
-        BiPredicate<String, Attachment> predicate = new BiPredicate<String, Attachment>() {
+        Predicate<Attachment> predicate = new Predicate<Attachment>() {
             @Override
-            public boolean test(String s, Attachment attachment) {
+            public boolean test(Attachment attachment) {
                 return attachment.getSize() > Integer.parseInt(filterBy.get());
             }
         };
@@ -31,9 +31,9 @@ public class SearchAtt {
                 return "bug";
             }
         };
-        BiPredicate<String, Attachment> predicate = new BiPredicate<String, Attachment>() {
+        Predicate<Attachment> predicate = new Predicate<Attachment>() {
             @Override
-            public boolean test(String s, Attachment attachment) {
+            public boolean test(Attachment attachment) {
                 return attachment.getName().contains(filterBy.get());
             }
         };
@@ -42,11 +42,11 @@ public class SearchAtt {
     }
 
     public static List<Attachment> filter(List<Attachment> list,
-                                          BiPredicate<String, Attachment> predicate,
+                                          Predicate<Attachment> predicate,
                                           Supplier<String> filterBy) {
         List<Attachment> filteredList = new ArrayList<>();
         for (Attachment attachment : list) {
-           if (predicate.test(filterBy.get(), attachment)) {
+           if (predicate.test(attachment)) {
                filteredList.add(attachment);
            }
         }
