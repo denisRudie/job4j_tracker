@@ -38,7 +38,10 @@ public class FI {
 
 //        Comparators for sorting
         Comparator<String> cmpText = (left, right) -> left.compareTo(right);
-        Comparator<String> cmpDescSize = (left, right) -> right.length() - left.length();
+        Comparator<String> cmpDescSize = (left, right) -> {
+            System.out.println("compare - " + left.length() + " : " + right.length());
+            return right.length() - left.length();
+        };
 
 //        testing comparators
         String[] strings1 = {"World!", "Hello", "abc"};
