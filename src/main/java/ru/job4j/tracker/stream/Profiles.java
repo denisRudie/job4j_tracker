@@ -12,19 +12,10 @@ public class Profiles {
                 .collect(Collectors.toList());
     }
 
-    public static void main(String[] args) {
-
-        List<Address> addressList = List.of(
-            new Address("Moscow", "Arbat", 1, 1),
-            new Address("Amsterdam", "Arbat", 1, 1),
-            new Address("Moscow", "Arbat", 1, 1)
-        );
-
-        List<Address> sortedList = addressList.stream()
+    List<Address> sort(List<Address> addressList) {
+                return addressList.stream()
                 .sorted(Comparator.comparing(Address::getCity))
                 .distinct()
                 .collect(Collectors.toList());
-
-        sortedList.forEach(System.out::println);
     }
 }
