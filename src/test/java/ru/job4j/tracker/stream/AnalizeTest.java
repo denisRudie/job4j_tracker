@@ -11,7 +11,7 @@ public class AnalizeTest {
     @Test
     public void check() {
         Analize analize = new Analize();
-        Analize.Info infoTest = new Analize.Info(1, 1, 0);
+        Analize.Info infoTest = new Analize.Info(1, 1, 2);
         List<Analize.User> previous = List.of(
                 new Analize.User(1, "Mike"),
                 new Analize.User(2, "Mike"),
@@ -19,9 +19,7 @@ public class AnalizeTest {
         );
 
         List<Analize.User> current = List.of(
-                new Analize.User(1, "Mike"),
                 new Analize.User(2, "John"),
-                new Analize.User(3, "Mike"),
                 new Analize.User(4, "Mike")
         );
 
