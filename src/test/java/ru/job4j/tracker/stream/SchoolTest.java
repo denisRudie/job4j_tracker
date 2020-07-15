@@ -17,21 +17,24 @@ public class SchoolTest {
     @Test
     public void testClassA() {
         School school = new School();
-        List<Student> studentsA = school.collect(students, school.getClassA());
+        List<Student> studentsA = school.collect(students, student -> student.getScore() >= 70
+                && student.getScore() <= 100);
         assertThat(studentsA.get(0), is(students.get(0)));
     }
 
     @Test
     public void testClassB() {
         School school = new School();
-        List<Student> studentsB = school.collect(students, school.getClassB());
+        List<Student> studentsB = school.collect(students, student -> student.getScore() >= 50
+                && student.getScore() < 70);
         assertThat(studentsB.get(0), is(students.get(2)));
     }
 
     @Test
     public void testClassC() {
         School school = new School();
-        List<Student> studentsC = school.collect(students, school.getClassC());
+        List<Student> studentsC = school.collect(students, student -> student.getScore() >= 0
+                && student.getScore() < 50);
         assertThat(studentsC.get(0), is(students.get(1)));
     }
 
