@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class BankService {
     private Map<User, List<Account>> users = new HashMap<>();
@@ -16,18 +15,16 @@ public class BankService {
     /**
      * Метод добавляет новый аккаунт пользователю. Перед этим проверяет что такого аккаунта еще нет у пользователя.
      * @param passport Номер асспорта.
-     * @param account Аккаунт.
+     * @param account  Аккаунт.
      */
     public void addAccount(String passport, Account account) {
         List<Account> accounts = users.get(findByPassport(passport));
-        boolean checkForExist = true;
-        for (Account acc : accounts) {
-            if (account.equals(acc)) {
-                checkForExist = false;
-                break;
-            }
-        }
-        if (checkForExist) {
+
+        long count = users.get(findByPassport(passport)).stream()
+                .filter(account::equals)
+                .count();
+
+        if (count == 0) {
             accounts.add(account);
             users.put(findByPassport(passport), accounts);
         }
@@ -35,37 +32,33 @@ public class BankService {
 
     /**
      * Метод ищет пользователя по номеру паспорта.
+     *
      * @param passport Номер асспорта.
      * @return подошедщий пользователь или null (если не нашел).
      */
     public User findByPassport(String passport) {
-        for (User user : users.keySet()) {
-            if (user.getPassport().equals(passport)) {
-                return user;
-            }
-        }
-        return null;
+        return users.keySet()
+                .stream()
+                .filter(user -> user.getPassport().equals(passport))
+                .findFirst().orElse(null);
     }
 
     /**
      * Метод ищет Аккаунт пользовотеля по номеру паспорта (passport) и номеру счета (requisite).
+     *
      * @return подошедщий аккаунт или null (если не нашел).
      */
     public Account findByRequisite(String passport, String requisite) {
-        List<Account> accounts = users.get(findByPassport(passport));
-        for (Account acc : accounts) {
-            if (requisite.equals(acc.getRequisite())) {
-                return acc;
-            }
-        }
-        return null;
+        return users.get(findByPassport(passport)).stream()
+                .filter(account -> requisite.equals(account.getRequisite()))
+                .findFirst().orElse(null);
     }
 
     /**
      * Метод переводит деньги от аккаунта одного пользовотеля к другому.
-     * @param srcPassport srcRequisite - данные пользователя который совершает перевод
+     * @param srcPassport  srcRequisite - данные пользователя который совершает перевод
      * @param destPassport destRequisite - данные пользователя которому совершают перевод
-     * @param amount Сумма перевода.
+     * @param amount       Сумма перевода.
      * @return результат операции. Проверка что оба аккаунт существуют и на первом достаточно денег для перевода.
      */
     public boolean transferMoney(String srcPassport, String srcRequisite,

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class BankServiceTest {
@@ -34,5 +35,11 @@ public class BankServiceTest {
         bank.addAccount(user.getPassport(), new Account("113", 50));
         bank.transferMoney(user.getPassport(), "5546", user.getPassport(), "113", 150);
         Assert.assertEquals(bank.findByRequisite("3434", "113").getBalance(), 200, 0.01);
+    }
+
+    @Test
+    public void nullWhenAbsentUser() {
+        BankService bank = new BankService();
+        Assert.assertThat(bank.findByPassport("123"), is(nullValue()));
     }
 }
