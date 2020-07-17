@@ -1,6 +1,5 @@
 package ru.job4j.tracker.lambda;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class PriorityQueue {
@@ -14,8 +13,8 @@ public class PriorityQueue {
      * @param task задача
      */
     public void put(Task task) {
-        Iterator<Task> iter = tasks.iterator();
-        int i = 0;
+        var iter = tasks.iterator();
+        var i = 0;
         for (; iter.hasNext(); i++) {
             if (iter.next().getPriority() > task.getPriority()) {
                 break;
