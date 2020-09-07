@@ -25,15 +25,16 @@ public class SqlTracker implements Store {
 
     @Override
     public Item add(Item item) {
-        try {
-            PreparedStatement ps = conn.prepareStatement(
-                    "insert into items (name) values (?)",
-                    Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement ps = conn.prepareStatement(
+                "insert into items (name) values (?)",
+                Statement.RETURN_GENERATED_KEYS)){
             ps.setString(1, item.getName());
             ps.executeUpdate();
-            ResultSet generatedKey = ps.getGeneratedKeys();
-            if (generatedKey.next()) {
-                item.setId(generatedKey.getInt(1));
+
+            try (ResultSet generatedKey = ps.getGeneratedKeys()) {
+                if (generatedKey.next()) {
+                    item.setId(generatedKey.getInt(1));
+                }
             }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
@@ -44,9 +45,8 @@ public class SqlTracker implements Store {
     @Override
     public boolean replace(String id, Item item) {
         boolean rsl = false;
-        try {
-            PreparedStatement st = conn.prepareStatement(
-                    "update items set name = ? where id = ?");
+        try ( PreparedStatement st = conn.prepareStatement(
+                "update items set name = ? where id = ?")){
             st.setString(1, item.getName());
             st.setInt(2, Integer.parseInt(id));
             st.executeUpdate();
@@ -60,9 +60,8 @@ public class SqlTracker implements Store {
     @Override
     public boolean delete(String id) {
         boolean rsl = false;
-        try {
-            PreparedStatement st = conn.prepareStatement(
-                    "delete from items where id = ?");
+        try (PreparedStatement st = conn.prepareStatement(
+                "delete from items where id = ?")) {
             st.setInt(1, Integer.parseInt(id));
             st.executeUpdate();
             rsl = true;
@@ -75,10 +74,8 @@ public class SqlTracker implements Store {
     @Override
     public List<Item> findAll() {
         List<Item> itemList = new ArrayList<>();
-        try {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT * FROM items");
-
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT * FROM items")) {
             while (rs.next()) {
                 Item i = new Item(rs.getString("name"));
                 i.setId(rs.getInt("id"));
@@ -93,16 +90,16 @@ public class SqlTracker implements Store {
     @Override
     public List<Item> findByName(String key) {
         List<Item> itemList = new ArrayList<>();
-        try {
-            PreparedStatement st = conn.prepareStatement(
-                    "SELECT * FROM items where name = ?");
+        try (PreparedStatement st = conn.prepareStatement(
+                "SELECT * FROM items where name = ?")) {
             st.setString(1, key);
-            ResultSet rs = st.executeQuery();
 
-            while (rs.next()) {
-                Item i = new Item(rs.getString("name"));
-                i.setId(rs.getInt("id"));
-                itemList.add(i);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Item i = new Item(rs.getString("name"));
+                    i.setId(rs.getInt("id"));
+                    itemList.add(i);
+                }
             }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
@@ -113,15 +110,15 @@ public class SqlTracker implements Store {
     @Override
     public Item findById(String id) {
         Item rsl = null;
-        try {
-            PreparedStatement st = conn.prepareStatement(
-                    "SELECT * FROM items where id = ?");
+        try (PreparedStatement st = conn.prepareStatement(
+                "SELECT * FROM items where id = ?")) {
             st.setInt(1, Integer.parseInt(id));
-            ResultSet rs = st.executeQuery();
 
-            if (rs.next()) {
-                rsl = new Item(rs.getString("name"));
-                rsl.setId(rs.getInt("id"));
+            try (ResultSet rs = st.executeQuery()) {
+                if (rs.next()) {
+                    rsl = new Item(rs.getString("name"));
+                    rsl.setId(rs.getInt("id"));
+                }
             }
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
