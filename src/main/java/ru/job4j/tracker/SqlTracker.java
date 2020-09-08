@@ -11,6 +11,10 @@ public class SqlTracker implements Store {
     private static final Logger LOG = LoggerFactory.getLogger(SqlTracker.class);
     private Connection conn;
 
+    public SqlTracker(Connection conn) {
+        this.conn = conn;
+    }
+
     @Override
     public void init() {
         String url = "jdbc:postgresql://localhost:5432/tracker";
