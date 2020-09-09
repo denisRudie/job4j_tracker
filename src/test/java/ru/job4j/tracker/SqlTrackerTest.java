@@ -4,10 +4,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
@@ -18,13 +22,15 @@ public class SqlTrackerTest {
     private static final Logger LOG = LoggerFactory.getLogger(SqlTrackerTest.class);
 
     public Connection init() {
-        String url = "jdbc:postgresql://localhost:5432/tracker";
-        String username = "postgres";
-        String password = "123";
         Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
+        try(FileInputStream fis = new FileInputStream("src/main/resources/app.properties")) {
+            Properties pr = new Properties();
+            pr.load(fis);
+            conn = DriverManager.getConnection(
+                    pr.getProperty("url"),
+                    pr.getProperty("username"),
+                    pr.getProperty("password"));
+        } catch (SQLException | IOException e) {
             LOG.error(e.getMessage(), e);
         }
         return conn;
