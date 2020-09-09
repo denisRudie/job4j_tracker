@@ -3,9 +3,12 @@ package ru.job4j.tracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class SqlTracker implements Store {
     private static final Logger LOG = LoggerFactory.getLogger(SqlTracker.class);
@@ -17,12 +20,14 @@ public class SqlTracker implements Store {
 
     @Override
     public void init() {
-        String url = "jdbc:postgresql://localhost:5432/tracker";
-        String username = "postgres";
-        String password = "123";
-        try {
-            conn = DriverManager.getConnection(url, username, password);
-        } catch (SQLException e) {
+        Properties pr = new Properties();
+        try (FileInputStream fis = new FileInputStream("src/main/resources/app.properties")) {
+            pr.load(fis);
+            conn = DriverManager.getConnection(
+                    pr.getProperty("url"),
+                    pr.getProperty("username"),
+                    pr.getProperty("password"));
+        } catch (IOException | SQLException e) {
             LOG.error(e.getMessage(), e);
         }
     }
