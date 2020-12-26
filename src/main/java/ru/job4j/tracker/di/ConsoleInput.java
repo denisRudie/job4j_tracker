@@ -1,9 +1,11 @@
 package ru.job4j.tracker.di;
 
+import org.springframework.stereotype.Component;
 import ru.job4j.tracker.Input;
 
 import java.util.Scanner;
 
+@Component
 public class ConsoleInput implements Input {
     /**
      * get scanner
