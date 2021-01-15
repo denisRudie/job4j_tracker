@@ -2,6 +2,7 @@ package ru.job4j.tracker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.job4j.tracker.react.Observe;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -98,6 +99,19 @@ public class SqlTracker implements Store {
             LOG.error(e.getMessage(), e);
         }
         return itemList;
+    }
+
+    public void findAll (Observe<Item> observe) {
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT * FROM items")) {
+            while (rs.next()) {
+                Item i = new Item(rs.getString("name"));
+                i.setId(rs.getInt("id"));
+                observe.receive(i);
+            }
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
     }
 
     @Override
